@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 23.1) (preloaded format=pdflatex 2023.4.11)  11 APR 2023 17:57
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.4.19)  19 APR 2023 21:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -865,38 +865,33 @@ Package hyperref Info: Link coloring OFF on input line 73.
 \openout7 = `Project2_report.out'.
 
 \c@lstlisting=\count343
+<../graphs/bikeStationMap.png, id=18, 599.23875pt x 359.3425pt>
+File: ../graphs/bikeStationMap.png Graphic file (type png)
+<use ../graphs/bikeStationMap.png>
+Package pdftex.def Info: ../graphs/bikeStationMap.png  used on input line 135.
+(pdftex.def)             Requested size: 328.82707pt x 197.18936pt.
  [1
 
-{C:/Users/imeld/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] (Project2_re
-port.aux)
-
-Package rerunfilecheck Warning: File `Project2_report.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `Project2_report.out':
-(rerunfilecheck)             Before: 75873BF80DA1C6096989D8F1AAA2F69D;704
-(rerunfilecheck)             After:  19A6964618DFEDC594744BFABBC8A482;504.
+{C:/Users/imeld/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2 <../graph
+s/bikeStationMap.png>] (Project2_report.aux)
+Package rerunfilecheck Info: File `Project2_report.out' has not changed.
+(rerunfilecheck)             Checksum: 7E14814790BA288478B0A72447AE6847;655.
  ) 
 Here is how much of TeX's memory you used:
- 26067 strings out of 476326
- 460994 string characters out of 5800385
- 1853660 words of memory out of 5000000
- 46028 multiletter control sequences out of 15000+600000
+ 26081 strings out of 476331
+ 461237 string characters out of 5800428
+ 1859660 words of memory out of 5000000
+ 46038 multiletter control sequences out of 15000+600000
  522054 words of font info for 74 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,7n,89p,3249b,438s stack positions out of 10000i,1000n,20000p,200000b,200000s
-
-pdfTeX warning (dest): name{section.3} has been referenced but does not exist, 
-replaced by a fixed one
-
-<C:/Install/MikTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Install/MikTeX
-/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Install/MikTeX/fonts/type1/public
-/amsfonts/cm/cmr17.pfb><C:/Install/MikTeX/fonts/type1/public/amsfonts/cm/cmtt12
-.pfb>
-Output written on Project2_report.pdf (1 page, 47600 bytes).
+ 84i,8n,89p,3249b,437s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Install/MikTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Install/MikT
+eX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Install/MikTeX/fonts/type1/publ
+ic/amsfonts/cm/cmr17.pfb><C:/Install/MikTeX/fonts/type1/public/amsfonts/cm/cmtt
+12.pfb>
+Output written on Project2_report.pdf (2 pages, 241482 bytes).
 PDF statistics:
- 47 PDF objects out of 1000 (max. 8388607)
- 5 named destinations out of 1000 (max. 500000)
- 37 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 57 PDF objects out of 1000 (max. 8388607)
+ 7 named destinations out of 1000 (max. 500000)
+ 42 words of extra memory for PDF output out of 10000 (max. 10000000)
 
