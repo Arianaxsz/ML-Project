@@ -32,3 +32,6 @@ dublinbikes/dublinbikes_20210401_20210701.csv
 dublinbikes/dublinbikes_20210701_20211001.csv
 dublinbikes/dublinbikes_20211001_20220101.csv
 data/full_data.csv
+data/station_data.csv
+data/test.csv
+data/training.csv

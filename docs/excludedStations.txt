@@ -1,0 +1,35 @@
+CUSTOM HOUSE                         15035
+CATHAL BRUGHA STREET                 14785
+PRINCES STREET / O'CONNELL STREET    14785
+FOWNES STREET UPPER                  14784
+DAME STREET                          14784
+HIGH STREET                          14783
+CHRISTCHURCH PLACE                   14645
+ROYAL HOSPITAL                       14507
+KILMAINHAM LANE                      14507
+KILMAINHAM GAOL                      14507
+AVONDALE ROAD                        14507
+RATHDOWN ROAD                        14507
+CHARLEVILLE ROAD                     14507
+ROTHE ABBEY                          14507
+BROOKFIELD ROAD                      14507
+ORMOND QUAY UPPER                    14507
+GEORGES QUAY                         14507
+SMITHFIELD                           14507
+JAMES STREET                         14507
+HEUSTON BRIDGE (SOUTH)               14507
+ST. JAMES HOSPITAL (CENTRAL)         14506
+COLLINS BARRACKS MUSEUM              14506
+PARKGATE STREET                      14506
+EMMET ROAD                           14506
+MOUNT BROWN                          14506
+ST JAMES HOSPITAL (LUAS)             14506
+MARKET STREET SOUTH                  14506
+HEUSTON STATION (CAR PARK)           14505
+HEUSTON STATION (CENTRAL)            14505
+HEUSTON BRIDGE (NORTH)               14505
+BLACKHALL PLACE                      14505
+WILTON TERRACE (PARK)                 9542
+MERRION SQUARE SOUTH                  9298
+KILLARNEY STREET                      4759
+BENSON STREET                          205
