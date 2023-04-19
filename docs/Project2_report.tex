@@ -111,6 +111,42 @@ remember to justify your choices and to plot clear, compact figures
 
 \end{comment}
 
+\section{Technical/Data issues}
+Missing data ...
+
+
+
+
+Picked stations by clustering on ........
+
+Excluded stations with less than 300,000 data points.   None of the stations were open the whole time.
+2 stations from each cluster.  The cluster 2 stations had similar pre-pandemic characteristics and both serve hospitals.% Table with station data?, incl stands, colour
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|l|r|r|}
+		Station Name & cluster & bike stands\\
+		FITZWILLIAM SQUARE EAST & 0 & 40\\
+		HANOVER QUAY & 0 & 40\\
+		MATER HOSPITAL & 2 & 40\\
+		NEW CENTRAL BANK & 1 & 40 \\
+		PARNELL SQUARE NORTH & 2 & 20\\
+		YORK STREET EAST & 1 & 32 \\
+		
+	\end{tabular} 
+\end{table}
+
+
+\begin{figure}[!htbp]
+	\includegraphics[width=0.7\textwidth]{../graphs/bikeStationMap.png}
+	\caption{Selected Bike Stations}
+	\label{fig:stations}
+\end{figure}
+
+Variable modelled is usage, which is the difference in available bikes from one time point to the next.  For modelling, this is normalised by dividing by the number of bike stands.
+
+
+
 
 \section{The impact of the pandemic on bike usage}
 %To assess the impact of the pandemic on the city-bike usage;
@@ -133,12 +169,17 @@ remember to justify your choices and to plot clear, compact figures
 \section{Estimated non-pandemic usage for 2020}
 %2. To estimate how the city-bike usage would have been without the pandemic (e.g., 2020) 
 
+
+
 %\section{Predicted bike usage for 2022} 
 %To predict the city-bike usage for 2022 in both the pandemic and no-pandemic scenarios. Use both qualitative and quantitative comparisons.
 
+\section*{notes}
+\texttt{https://github.com/Arianaxsz/ML-Project}
+
+Code in \texttt{fileName.ipynb}, \texttt{py/fileName.py}
 
 
-	Code in \texttt{fileName.ipynb}
 %===============================================================
 
 % # Code snippets
