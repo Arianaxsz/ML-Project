@@ -19,23 +19,40 @@ import glob
 print(os.getcwd())
 old_dir = os.getcwd()
 
-#os.chdir('C:/Users/imeld/work/ML_CSP/ML-Project')
+os.chdir('C:/Users/imeld/work/ML_CSP/ML-Project')
 
 ##
 
-data = pd.read_csv("data/full_data.csv")
+data = pd.read_csv("data/station_data.csv")
 ##
 
-data = data.dropn
+selected_stations = pd.DataFrame(
+    {
+        "NAME": ['HANOVER QUAY', 'FITZWILLIAM SQUARE EAST', 'YORK STREET EAST', 'NEW CENTRAL BANK', 
+'MATER HOSPITAL', 'PARNELL SQUARE NORTH'],
+        "cluster": [0, 0, 1, 1, 2, 2]
+    
+    }
+)
+
+##
+data = pd.merge(data, selected_stations, how='left', on = 'NAME', \
+              indicator=False)
+##
+
+data =  data.dropna()
 #m= [not pd.isna(c) for c in data['cluster']]
 #m.head()
+
+##
+data.to_csv("data/station_data.csv", index=False)
 ##
 ct = pd.crosstab(index=data['NAME'], columns=data['cluster'])
 print(ct)
 
 data = data.sort_values(['NAME', 'TIME' ])
 
-data.to_csv("data/station_data.csv", index=False)
+
 
 locations  = data[['LATITUDE', 'LONGITUDE', 'cluster']].drop_duplicates()
 
