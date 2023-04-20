@@ -133,21 +133,22 @@ df = df.dropna()
 # Remove columns with information that we don't need for the clustering
 df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
                         'time_type', 'hour', 'dayIndex', 'year',  'OCCUPANCY_PCT', 'FULL', 'EMPTY',\
-                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'day_type'\
-                        'day_number', 'month', 'day_number', 'datetime', 'week', 'date_for_merge', 'time', 'TIME'})
+                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'day_type',\
+                        'month', 'day_number', 'datetime', 'week', 'date_for_merge', 'time', 'TIME',\
+                        'date'})
 #%%
     
 #df = df.drop(columns = {'TIME'})
 #%%
-df_avg = df.groupby(['cluster','week']).agg('sum')
+df_avg = df.groupby(['cluster','yearWeek']).agg('mean')
 df_avg = df_avg.reset_index()
 
 #print(df_avg)
 #%%
-plt.plot(df_avg.week, df_avg.usage)
+plt.plot(df_avg.yearWeek, df_avg.usage)
 #%%
 # Reshape to get each time of the day in a column (features) and each station in a row (data-points)
-X = df_avg.pivot(index='cluster' , columns='week', values='usage')
+X = df_avg.pivot(index='cluster' , columns='yearWeek', values='usage')
 print(X.shape)
 X
 #%%
@@ -209,4 +210,10 @@ ax.set_xlabel('cluster')
 ax.set_ylabel('week')
 ax.set_zlabel('usage')
 plt.show()
+#%%
+
+#%%
+
+#%%
+
 #%%
