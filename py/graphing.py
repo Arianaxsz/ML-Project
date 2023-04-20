@@ -7,6 +7,8 @@ import datetime as dt
 from datetime import date
 warnings.filterwarnings('ignore')
 import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
+
 #import folium
 import sklearn
 import seaborn as sns
@@ -14,6 +16,8 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
 from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+
 import os
 #import glob
 #%%
@@ -24,26 +28,19 @@ os.path.join(os.path.curdir, 'selecting_stations.py')
 os.chdir(os.path.join(os.path.curdir, 'Documents/GitHub/ML-Project'))
 print(os.getcwd())
 
-
 #%%
 print(os.getcwd())
-
 #%%
-
 data = pd.read_csv("data/station_data.csv")
 #%%
 data.head()
-
 #%%
 #data.isnull().sum()
 data.isna().sum()
 #%%
-
 # constant value switches
 MAKE_FILES=True
 READ_FILES = False
-#%%
-data = data.drop('include', axis = 1)
 #%%
 data  = data.sort_values(['NAME', 'TIME' ])
 
@@ -108,17 +105,12 @@ data['month'] = data.datetime.dt.month
 data['week'] = data.datetime.dt.week
 data['year'] = data.datetime.dt.year
 data['dayIndex'] = [(d - startDate).days for d in data['date']]
+data['yearWeek'] = data.year *100+data.week
 
 data.sample(5)
 #%%
 print(data.columns.values)
 
-
-#%%
-test_data = data[data['year']>= 2020]
-test_data.to_csv("data/test.csv", index=False)
-pd.crosstab(index=test_data['NAME'], columns = data['cluster'])
-del test_data
 #%%
 #training set
 training_data = data[data['year'] < 2020]
@@ -129,37 +121,86 @@ training_data.to_csv("data/training.csv", index=False)#%%
 ct= pd.crosstab([training_data['NAME'], training_data['BIKE STANDS'], training_data['STATION ID']],training_data['cluster'])
 print(ct)
 #%%
-df = data.copy()
+df = training_data.copy()
+df = df.dropna()
+#range_start = date(2019, 12, 15)
+#range_end = date(2020, 2, 1)
 
-range_start = date(2019, 12, 15)
-range_end = date(2020, 2, 1)
-
-m = (df.date >= range_start) & (df.date <= range_end)
-df_short = df[m].sort_values(by='datetime')
-plt.plot(df_short.date,df_short['AVAILABLE BIKES'])
-#colors = np.array([0, 4.0, 8.0, 12.0, 16.0, 20, 24.0, 28, 32.0, 36.0, 40])
-#, c=colors, cmap='viridis'
-#plt.scatter(df_short.date,df_short['AVAILABLE BIKES'], s=2, color='hotpink')
-plt.show()
-
-#color='hotpink'
-#%%
-
-
-df_short.date.unique()
-
+#m = (df.date >= range_start) & (df.date <= range_end)
+#df_short = df[m].sort_values(by='datetime')
 
 #%%
-d= {'day': [18, 19, 20, 21, 26, 27, 28, 29, 2, 7, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 20, 21, 22, 26], \
-    'month': [12, 12, 12, 12, 12, 12, 12, 12, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], \
-    'year': [2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020]}
+#df['yearWeek'] = df.year *100+df.week
+
+# Remove columns with information that we don't need for the clustering
+df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
+                        'time_type', 'hour', 'dayIndex', 'year',  'OCCUPANCY_PCT', 'FULL', 'EMPTY',\
+                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', \
+                        'date_for_merge', 'time', 'TIME','datetime'})
+#%%
+   
+df.head()
+#df = df.drop(columns = {'TIME'})
+#%%
+df_avg = df.groupby(['cluster','date']).agg('mean')
+df_avg = df_avg.reset_index()
+
+#print(df_avg)
+#%%
+plt.plot(df_avg.date, df_avg.usage)
+#%%
+
+#ct= pd.crosstab([training_data['cluster'], training_data['year']],training_data['usage'], aggfunc='sum')
+#print(ct)
+
+#%%
+# Reshape to get each time of the day in a column (features) and each station in a row (data-points)
+X = df_avg.pivot(index='cluster' , columns='date', values='usage')
+print(X.shape)
+X
+#%%
+print(X.columns)
+
+#%%
+X = df.iloc[:, :-1]
+y = df.iloc[:, 5]
+
+#The script splits the dataset into 80% train data and 20% test data.
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+regressor = LinearRegression()  
+regressor.fit(X_train, y_train)
 
 
-missing = pd.DataFrame(data=d)
+y_pred = regressor.predict(X_test)
+df = pd.DataFrame({'actual': y_test, 'predicted': y_pred})
 
-missing['date'] = [date(a, b, c) for a, b, c in zip(missing.year, missing.month, missing.day)]
-missing.to_csv("data/missing.csv", index = False)
-missing
+df1 = df.head(40)
+df1['index'] = df1.reset_index().index
+#print(df1)
+
+ax = plt.gca()
+
+df1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
+df1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
+plt.title('Bikes available vs Bikes available predicted (Linear Regresion Method)')
+plt.xlabel('index')
+plt.ylabel('bikes available')
+
+plt.show(block=True)
+
+print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+
+
+#%%
+#Number of cluster 
 
 #%%
 
+#%%
+
+#%%
+
+#%%
