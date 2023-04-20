@@ -22,6 +22,7 @@ print(os.getcwd())
 old_dir = os.getcwd()
 #os.path.join(os.path.curdir, 'selecting_stations.py')
 os.chdir(os.path.join(os.path.curdir, 'Documents/GitHub/ML-Project'))
+#%%
 print(os.getcwd())
 
 
@@ -113,6 +114,21 @@ data['yearWeek'] = data.year *100+data.week
 
 print(data.sample(5))
 #%%
+df_usage = data[['date', 'usage']] 
+df_usage.date = dates = [dt.datetime.strptime(d, "%Y-%m-%d") for d in df_usage["date"]]
+diff_date = abs(df_usage.date.dt.date.diff())
+
+
+
+#%%
+
+m = diff_date.dt.days <=1
+data = data[m]
+
+
+#%%
+data.to_csv("data/station_data.csv", index=False)
+
 print(data.columns.values)
 
 
@@ -164,4 +180,12 @@ missing.to_csv("data/missing.csv", index = False)
 missing
 
 #%%
+
+
+
+#%%
+
+
+m = diff_date.dt.days >1
+df_usage[m].to_csv('data/discontinuities.csv') 
 

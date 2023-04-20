@@ -33,7 +33,7 @@ import os
 print(os.getcwd())
 old_dir = os.getcwd()
 #os.path.join(os.path.curdir, 'selecting_stations.py')
-os.path.join(os.path.curdir, 'selecting_stations.py')
+#os.path.join(os.path.curdir, 'selecting_stations.py')
 os.chdir(os.path.join(os.path.curdir, 'Documents/GitHub/ML-Project'))
 print(os.getcwd())
 
@@ -124,7 +124,7 @@ print(data.columns.values)
 #training set
 training_data = data[data['year'] < 2020]
 #len(training_data)
-training_data.to_csv("data/training.csv", index=False)#%%
+#training_data.to_csv("data/training.csv", index=False)#%%
 
 
 ct= pd.crosstab([training_data['NAME'], training_data['BIKE STANDS'], training_data['STATION ID']],training_data['cluster'])
@@ -166,6 +166,8 @@ X
 print(X.columns)
 
 #%%
+
+
 #%%
 
 #%%
@@ -178,7 +180,7 @@ df = df.dropna()
 
 #%%
 df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
-                        'time_type', 'hour', 'dayIndex', 'OCCUPANCY_PCT', 'FULL', 'EMPTY',\
+                        'time_type', 'hour', 'dayIndex', \
                         'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'time_type',\
                         'datetime', 'date_for_merge', 'time', 'TIME', 'day_type', 'date'})
 #%%
@@ -217,22 +219,19 @@ print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_p
 
 #https://github.com/Panchop10/dublinbike_predictive_analytics
 #%%
-#clf = svm.SVC(kernel='linear', C=1, random_state=42)
-#scores = cross_val_score(clf, X, y, cv=5)
-#scores
 #%%
 #
 
 regressions = [
     svm.SVR(),
-    linear_model.SGDRegressor(),
+    linear_model.SGDRegressor(),   # takes a while
     linear_model.BayesianRidge(),
     linear_model.LassoLars(),
-    #linear_model.ARDRegression(),
+    #linear_model.ARDRegression(),   # out of memory
     linear_model.PassiveAggressiveRegressor(),
-    linear_model.TheilSenRegressor(),
+    #linear_model.TheilSenRegressor(), # out of memory
     linear_model.LinearRegression()]
-
+#linear_model.RidgeCV
 # fit & score each regression model
 for item in regressions:
     print(item)
@@ -244,5 +243,62 @@ for item in regressions:
 
 
 #%%
+clf = svm.SVR() #linear_model.SGDRegressor()
+scores = cross_val_score(clf, X, y, cv=5)
+scores
 
 #%%
+from sklearn.model_selection import cross_val_predict
+
+#%%
+y_pred = cross_val_predict(clf, X, y, cv = 5)
+
+y_pred = regressor.predict(X_test)
+df = pd.DataFrame({'actual': y_test, 'predicted': y_pred})
+
+df1 = df   #.head(40)
+df1['index'] = df1.reset_index().index
+#print(df1)
+#%%
+ax = plt.gca()
+
+df1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
+df1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
+plt.title('Actual vs predicted usage SGD Linear - 10 fold crossvalidation')
+plt.xlabel('index')
+plt.ylabel('bike usage (normalised)')
+
+plt.show(block=True)
+
+print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+
+
+
+
+#%%
+from sklearn.metrics import PredictionErrorDisplay
+#%%
+
+fig, axs = plt.subplots(ncols=2, figsize=(8, 4))
+PredictionErrorDisplay.from_predictions(
+    y,
+    y_pred=y_pred,
+    kind="actual_vs_predicted",
+    subsample=100,
+    ax=axs[0],
+    random_state=0,
+)
+axs[0].set_title("Actual vs. Predicted values")
+PredictionErrorDisplay.from_predictions(
+    y,
+    y_pred=y_pred,
+    kind="residual_vs_predicted",
+    subsample=100,
+    ax=axs[1],
+    random_state=0,
+)
+axs[1].set_title("Residuals vs. Predicted Values")
+fig.suptitle("Plotting cross-validated predictions")
+plt.tight_layout()
+plt.show()
