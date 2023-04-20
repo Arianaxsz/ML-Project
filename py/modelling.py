@@ -1,27 +1,38 @@
 #import necessary libraries and files 
 import pandas as pd
 import numpy as np
+
 import warnings
+warnings.filterwarnings('ignore')
 import time
 import datetime as dt
 from datetime import date
-warnings.filterwarnings('ignore')
+
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
-
-#import folium
-import sklearn
 import seaborn as sns
+#import folium
 
+#from matplotlib import pyplot as plt
+
+import sklearn
 from sklearn.model_selection import train_test_split
-from matplotlib import pyplot as plt
-from sklearn.cluster import KMeans
+from sklearn.model_selection import cross_val_score
+
+#from sklearn.cluster import KMeans
+from sklearn.linear_model import LinearRegression
+from sklearn import linear_model
+from sklearn import svm
+
+from sklearn import metrics
+
 import os
 #import glob
 #%%
 #home = str(os.Path.home())
 print(os.getcwd())
 old_dir = os.getcwd()
+#os.path.join(os.path.curdir, 'selecting_stations.py')
 os.path.join(os.path.curdir, 'selecting_stations.py')
 os.chdir(os.path.join(os.path.curdir, 'Documents/GitHub/ML-Project'))
 print(os.getcwd())
@@ -180,8 +191,6 @@ y = df.usage
 #%%
 #The script splits the dataset into 80% train data and 20% test data.
 #from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
 regressor = LinearRegression()  
 regressor.fit(X_train, y_train)
@@ -208,8 +217,31 @@ print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_p
 
 #https://github.com/Panchop10/dublinbike_predictive_analytics
 #%%
-
+#clf = svm.SVC(kernel='linear', C=1, random_state=42)
+#scores = cross_val_score(clf, X, y, cv=5)
+#scores
 #%%
+#
+
+regressions = [
+    svm.SVR(),
+    linear_model.SGDRegressor(),
+    linear_model.BayesianRidge(),
+    linear_model.LassoLars(),
+    linear_model.ARDRegression(),
+    linear_model.PassiveAggressiveRegressor(),
+    linear_model.TheilSenRegressor(),
+    linear_model.LinearRegression()]
+
+# fit & score each regression model
+for item in regressions:
+    print(item)
+    reg = item
+    reg.fit(X_train, y_train)
+    y_pred = reg.predict(X_test)
+    print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred),'\n')
+    print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)),'\n')
+
 
 #%%
 

@@ -20,12 +20,13 @@ import os
 #home = str(os.Path.home())
 print(os.getcwd())
 old_dir = os.getcwd()
-os.path.join(os.path.curdir, 'selecting_stations.py')
+#os.path.join(os.path.curdir, 'selecting_stations.py')
 os.chdir(os.path.join(os.path.curdir, 'Documents/GitHub/ML-Project'))
 print(os.getcwd())
 
 
 #%%
+os.chdir(os.path.join(os.path.curdir, '../'))
 print(os.getcwd())
 
 #%%
@@ -79,9 +80,9 @@ data['date_for_merge'] = data.datetime.dt.round('d')
 
 startDate = min(dates).date()
 #create important features
-data['OCCUPANCY_PCT'] =  data['AVAILABLE BIKES'] / data['BIKE STANDS']
-data['FULL'] = np.where(data['OCCUPANCY_PCT'] == 0, 1,0 )
-data['EMPTY'] = np.where(data['OCCUPANCY_PCT'] == 1, 1,0 )
+#data['OCCUPANCY_PCT'] =  data['AVAILABLE BIKES'] / data['BIKE STANDS']
+#data['FULL'] = np.where(data['OCCUPANCY_PCT'] == 0, 1,0 )
+#data['EMPTY'] = np.where(data['OCCUPANCY_PCT'] == 1, 1,0 )
 
 ### create time aggregates needed for clustering
 # weekday/saturday/sunday
@@ -108,8 +109,9 @@ data['month'] = data.datetime.dt.month
 data['week'] = data.datetime.dt.week
 data['year'] = data.datetime.dt.year
 data['dayIndex'] = [(d - startDate).days for d in data['date']]
+data['yearWeek'] = data.year *100+data.week
 
-data.sample(5)
+print(data.sample(5))
 #%%
 print(data.columns.values)
 
@@ -117,7 +119,7 @@ print(data.columns.values)
 #%%
 test_data = data[data['year']>= 2020]
 test_data.to_csv("data/test.csv", index=False)
-pd.crosstab(index=test_data['NAME'], columns = data['cluster'])
+print(pd.crosstab(index=test_data['NAME'], columns = data['cluster']))
 del test_data
 #%%
 #training set
