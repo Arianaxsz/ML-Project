@@ -155,61 +155,58 @@ X
 print(X.columns)
 
 #%%
-#from sklearn.cluster import KMeans
 #%%
-#Number of cluster 
-n_clusters = 3
-
-#Define model
-kmeans = KMeans(n_clusters=n_clusters, random_state=42)
-
-#Fit kmeans model and plot the centroids
-kmeans.fit(X)
-
-#Predict
-clusters = kmeans.predict(X)
-
-print(clusters)
 
 #%%
-fig, ax = plt.subplots(figsize=(10,6))
-colours = ['red','blue','green']
-
-for k, colour in zip(kmeans.cluster_centers_, colours):
-    plt.scatter(X.columns,100*k,color=colour,label=colour)
-    
-#ax.set_xlim([0,24])
-#ax.set_ylim([0,100])
-xticks = ax.get_xticks()
-plt.xlabel('Week')
-plt.ylabel("usage")
-plt.show()
-
 
 #%%
 
 df = training_data.copy()
+#%%
 df = df.dropna()
+
+#%%
 df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
                         'time_type', 'hour', 'dayIndex', 'OCCUPANCY_PCT', 'FULL', 'EMPTY',\
-                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', \
-                        'datetime', 'date_for_merge', 'time', 'TIME'})
+                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'time_type',\
+                        'datetime', 'date_for_merge', 'time', 'TIME', 'day_type', 'date'})
 #%%
+df.head(1)
 #%%
-    
-#3D visualisation
-fig = plt.figure(figsize=(20,20))
-ax = plt.axes(projection='3d')
-for k, colour in zip(range(n_clusters), colours):
-    toPlot = X[clusters==k]
-    x,y = np.array(toPlot).nonzero() #get indexes
-    z = toPlot.unstack() #linearise the DataFrame
-    ax.scatter(toPlot.index[x],toPlot.columns[y],z,c= colour)
+X = df.copy().drop(columns = 'usage')
+y = df.usage
+#%%
+#df = df.drop(columns='datetime')
+#%%
+#The script splits the dataset into 80% train data and 20% test data.
+#from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
 
-ax.set_xlabel('cluster')
-ax.set_ylabel('week')
-ax.set_zlabel('usage')
-plt.show()
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+regressor = LinearRegression()  
+regressor.fit(X_train, y_train)
+#%%
+y_pred = regressor.predict(X_test)
+df = pd.DataFrame({'actual': y_test, 'predicted': y_pred})
+
+df1 = df.head(40)
+df1['index'] = df1.reset_index().index
+#print(df1)
+#%%
+ax = plt.gca()
+
+df1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
+df1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
+plt.title('Actual vs predicted usage (Linear Regresion Method)')
+plt.xlabel('index')
+plt.ylabel('bike usage')
+
+plt.show(block=True)
+
+print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+
+#https://github.com/Panchop10/dublinbike_predictive_analytics
 #%%
 
 #%%

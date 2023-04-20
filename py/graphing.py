@@ -16,8 +16,6 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
 from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
-
 import os
 #import glob
 #%%
@@ -135,68 +133,83 @@ df = df.dropna()
 # Remove columns with information that we don't need for the clustering
 df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
                         'time_type', 'hour', 'dayIndex', 'year',  'OCCUPANCY_PCT', 'FULL', 'EMPTY',\
-                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', \
-                        'date_for_merge', 'time', 'TIME','datetime'})
+                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'day_type',\
+                        'month', 'day_number', 'datetime', 'week', 'date_for_merge', 'time', 'TIME',\
+                        'date'})
 #%%
-   
-df.head()
+    
 #df = df.drop(columns = {'TIME'})
 #%%
-df_avg = df.groupby(['cluster','date']).agg('mean')
+df_avg = df.groupby(['cluster','yearWeek']).agg('mean')
 df_avg = df_avg.reset_index()
 
 #print(df_avg)
 #%%
-plt.plot(df_avg.date, df_avg.usage)
-#%%
-
-#ct= pd.crosstab([training_data['cluster'], training_data['year']],training_data['usage'], aggfunc='sum')
-#print(ct)
-
+plt.plot(df_avg.yearWeek, df_avg.usage)
 #%%
 # Reshape to get each time of the day in a column (features) and each station in a row (data-points)
-X = df_avg.pivot(index='cluster' , columns='date', values='usage')
+X = df_avg.pivot(index='cluster' , columns='yearWeek', values='usage')
 print(X.shape)
 X
 #%%
 print(X.columns)
 
 #%%
-X = df.iloc[:, :-1]
-y = df.iloc[:, 5]
+#from sklearn.cluster import KMeans
+#%%
+#Number of cluster 
+n_clusters = 3
 
-#The script splits the dataset into 80% train data and 20% test data.
-from sklearn.model_selection import train_test_split
+#Define model
+kmeans = KMeans(n_clusters=n_clusters, random_state=42)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
-regressor = LinearRegression()  
-regressor.fit(X_train, y_train)
+#Fit kmeans model and plot the centroids
+kmeans.fit(X)
 
+#Predict
+clusters = kmeans.predict(X)
 
-y_pred = regressor.predict(X_test)
-df = pd.DataFrame({'actual': y_test, 'predicted': y_pred})
+print(clusters)
 
-df1 = df.head(40)
-df1['index'] = df1.reset_index().index
-#print(df1)
+#%%
+fig, ax = plt.subplots(figsize=(10,6))
+colours = ['red','blue','green']
 
-ax = plt.gca()
-
-df1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
-df1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
-plt.title('Bikes available vs Bikes available predicted (Linear Regresion Method)')
-plt.xlabel('index')
-plt.ylabel('bikes available')
-
-plt.show(block=True)
-
-print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
-print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+for k, colour in zip(kmeans.cluster_centers_, colours):
+    plt.scatter(X.columns,100*k,color=colour,label=colour)
+    
+#ax.set_xlim([0,24])
+#ax.set_ylim([0,100])
+xticks = ax.get_xticks()
+plt.xlabel('Week')
+plt.ylabel("usage")
+plt.show()
 
 
 #%%
-#Number of cluster 
 
+df = training_data.copy()
+df = df.dropna()
+df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
+                        'time_type', 'hour', 'dayIndex', 'OCCUPANCY_PCT', 'FULL', 'EMPTY',\
+                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', \
+                        'datetime', 'date_for_merge', 'time', 'TIME'})
+#%%
+#%%
+    
+#3D visualisation
+fig = plt.figure(figsize=(20,20))
+ax = plt.axes(projection='3d')
+for k, colour in zip(range(n_clusters), colours):
+    toPlot = X[clusters==k]
+    x,y = np.array(toPlot).nonzero() #get indexes
+    z = toPlot.unstack() #linearise the DataFrame
+    ax.scatter(toPlot.index[x],toPlot.columns[y],z,c= colour)
+
+ax.set_xlabel('cluster')
+ax.set_ylabel('week')
+ax.set_zlabel('usage')
+plt.show()
 #%%
 
 #%%
