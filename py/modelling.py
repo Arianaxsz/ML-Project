@@ -228,7 +228,7 @@ regressions = [
     linear_model.SGDRegressor(),
     linear_model.BayesianRidge(),
     linear_model.LassoLars(),
-    linear_model.ARDRegression(),
+    #linear_model.ARDRegression(),
     linear_model.PassiveAggressiveRegressor(),
     linear_model.TheilSenRegressor(),
     linear_model.LinearRegression()]
