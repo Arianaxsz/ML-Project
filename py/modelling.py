@@ -7,6 +7,8 @@ import datetime as dt
 from datetime import date
 warnings.filterwarnings('ignore')
 import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
+
 #import folium
 import sklearn
 import seaborn as sns
@@ -137,10 +139,74 @@ df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST
     
 #df = df.drop(columns = {'TIME'})
 #%%
-df_avg = df.groupby(['cluster','date']).agg('sum')
+df_avg = df.groupby(['cluster','week']).agg('sum')
 df_avg = df_avg.reset_index()
 
 #print(df_avg)
 #%%
-plt.plot(df_avg.date, df_avg.usage)
+plt.plot(df_avg.week, df_avg.usage)
+#%%
+# Reshape to get each time of the day in a column (features) and each station in a row (data-points)
+X = df_avg.pivot(index='cluster' , columns='week', values='usage')
+print(X.shape)
+X
+#%%
+print(X.columns)
+
+#%%
+#from sklearn.cluster import KMeans
+#%%
+#Number of cluster 
+n_clusters = 3
+
+#Define model
+kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+
+#Fit kmeans model and plot the centroids
+kmeans.fit(X)
+
+#Predict
+clusters = kmeans.predict(X)
+
+print(clusters)
+
+#%%
+fig, ax = plt.subplots(figsize=(10,6))
+colours = ['red','blue','green']
+
+for k, colour in zip(kmeans.cluster_centers_, colours):
+    plt.scatter(X.columns,100*k,color=colour,label=colour)
+    
+#ax.set_xlim([0,24])
+#ax.set_ylim([0,100])
+xticks = ax.get_xticks()
+plt.xlabel('Week')
+plt.ylabel("usage")
+plt.show()
+
+
+#%%
+
+df = training_data.copy()
+df = df.dropna()
+df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
+                        'time_type', 'hour', 'dayIndex', 'OCCUPANCY_PCT', 'FULL', 'EMPTY',\
+                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', \
+                        'datetime', 'date_for_merge', 'time', 'TIME'})
+#%%
+#%%
+    
+#3D visualisation
+fig = plt.figure(figsize=(20,20))
+ax = plt.axes(projection='3d')
+for k, colour in zip(range(n_clusters), colours):
+    toPlot = X[clusters==k]
+    x,y = np.array(toPlot).nonzero() #get indexes
+    z = toPlot.unstack() #linearise the DataFrame
+    ax.scatter(toPlot.index[x],toPlot.columns[y],z,c= colour)
+
+ax.set_xlabel('cluster')
+ax.set_ylabel('week')
+ax.set_zlabel('usage')
+plt.show()
 #%%
