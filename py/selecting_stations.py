@@ -6,7 +6,7 @@ import time
 import datetime as dt
 warnings.filterwarnings('ignore')
 import matplotlib.pyplot as plt
-import folium
+#import folium
 import sklearn
 import seaborn as sns
 
@@ -14,17 +14,23 @@ from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
 from sklearn.cluster import KMeans
 import os
-import glob
-##
+#import glob
+#%%
+#home = str(os.Path.home())
 print(os.getcwd())
 old_dir = os.getcwd()
+os.path.join(os.path.curdir, 'selecting_stations.py')
+os.chdir(os.path.join(os.path.curdir, 'Documents/GitHub/ML-Project'))
+print(os.getcwd())
 
-os.chdir('C:/Users/imeld/work/ML_CSP/ML-Project')
 
-##
+#%%
+print(os.getcwd())
+
+#%%
 
 data = pd.read_csv("data/station_data.csv")
-##
+#%%
 
 selected_stations = pd.DataFrame(
     {
@@ -35,10 +41,10 @@ selected_stations = pd.DataFrame(
     }
 )
 
-##
+#%%
 data = pd.merge(data, selected_stations, how='left', on = 'NAME', \
               indicator=False)
-##
+#%%
 
 data =  data.dropna()
 #m= [not pd.isna(c) for c in data['cluster']]
@@ -54,21 +60,22 @@ data = data.sort_values(['NAME', 'TIME' ])
 
 
 
-locations  = data[['LATITUDE', 'LONGITUDE', 'cluster']].drop_duplicates()
+#%%
+def mapLocations(data) :
+    locations  = data[['LATITUDE', 'LONGITUDE', 'cluster']].drop_duplicates()
+    #data.sample(50)
+    colordict = {0: 'blue', 1: 'red', 2: 'green'}
+    dublin_map = folium.Map([53.345, -6.2650], zoom_start=13.0)
 
-
-data.sample(50)
-colordict = {0: 'blue', 1: 'red', 2: 'green'}
-dublin_map = folium.Map([53.345, -6.2650], zoom_start=13.5)
-
-for LATITUDE, LONGITUDE, cluster in zip(locations['LATITUDE'],locations['LONGITUDE'],locations['cluster']):
-    folium.CircleMarker(
-        [LATITUDE, LONGITUDE],
-        color = 'b',
-        radius = 8,
-        fill_color=colordict[cluster],
-        fill=True,
-        fill_opacity=0.9
-        ).add_to(dublin_map)
-dublin_map
+    for LATITUDE, LONGITUDE, cluster in zip(locations['LATITUDE'],locations['LONGITUDE'],locations['cluster']):
+        folium.CircleMarker(
+            [LATITUDE, LONGITUDE],
+            color = 'b',
+            radius = 8,
+            fill_color=colordict[cluster],
+            fill=True,
+            fill_opacity=0.9
+            ).add_to(dublin_map)
+    dublin_map  
   
+#%%
