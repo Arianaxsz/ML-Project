@@ -118,7 +118,7 @@ ct= pd.crosstab([training_data['NAME'], training_data['BIKE STANDS'], training_d
 print(ct)
 #%%
 df = training_data.copy()
-
+df = df.dropna()
 #range_start = date(2019, 12, 15)
 #range_end = date(2020, 2, 1)
 
@@ -126,7 +126,21 @@ df = training_data.copy()
 #df_short = df[m].sort_values(by='datetime')
 
 #%%
-data['yearWeek'] = data.year *100+data.week
+#df['yearWeek'] = df.year *100+df.week
 
-dataByWeek = 
+# Remove columns with information that we don't need for the clustering
+df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
+                        'time_type', 'hour', 'dayIndex', 'year',  'OCCUPANCY_PCT', 'FULL', 'EMPTY',\
+                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'day_type'\
+                        'day_number', 'month', 'day_number', 'datetime', 'week', 'date_for_merge', 'time', 'TIME'})
+#%%
+    
+#df = df.drop(columns = {'TIME'})
+#%%
+df_avg = df.groupby(['cluster','date']).agg('sum')
+df_avg = df_avg.reset_index()
 
+#print(df_avg)
+#%%
+plt.plot(df_avg.date, df_avg.usage)
+#%%
