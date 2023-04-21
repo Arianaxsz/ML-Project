@@ -1,28 +1,39 @@
 #import necessary libraries and files 
 import pandas as pd
 import numpy as np
+
 import warnings
+warnings.filterwarnings('ignore')
 import time
 import datetime as dt
 from datetime import date
-warnings.filterwarnings('ignore')
+
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
-
-#import folium
-import sklearn
 import seaborn as sns
+#import folium
 
+#from matplotlib import pyplot as plt
+
+import sklearn
 from sklearn.model_selection import train_test_split
-from matplotlib import pyplot as plt
-from sklearn.cluster import KMeans
+from sklearn.model_selection import cross_val_score
+
+#from sklearn.cluster import KMeans
+from sklearn.linear_model import LinearRegression
+from sklearn import linear_model
+from sklearn import svm
+
+from sklearn import metrics
+
 import os
 #import glob
 #%%
 #home = str(os.Path.home())
 print(os.getcwd())
 old_dir = os.getcwd()
-os.path.join(os.path.curdir, 'selecting_stations.py')
+#os.path.join(os.path.curdir, 'selecting_stations.py')
+#os.path.join(os.path.curdir, 'selecting_stations.py')
 os.chdir(os.path.join(os.path.curdir, 'Documents/GitHub/ML-Project'))
 print(os.getcwd())
 
@@ -112,108 +123,218 @@ print(data.columns.values)
 #%%
 #training set
 training_data = data[data['year'] < 2020]
-#len(training_data)
-training_data.to_csv("data/training.csv", index=False)#%%
-
 
 ct= pd.crosstab([training_data['NAME'], training_data['BIKE STANDS'], training_data['STATION ID']],training_data['cluster'])
 print(ct)
 #%%
 df = training_data.copy()
 df = df.dropna()
-#range_start = date(2019, 12, 15)
-#range_end = date(2020, 2, 1)
-
-#m = (df.date >= range_start) & (df.date <= range_end)
-#df_short = df[m].sort_values(by='datetime')
-
-#%%
-#df['yearWeek'] = df.year *100+df.week
-
-# Remove columns with information that we don't need for the clustering
-df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
-                        'time_type', 'hour', 'dayIndex', 'year',  'OCCUPANCY_PCT', 'FULL', 'EMPTY',\
-                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'day_type',\
-                        'month', 'day_number', 'datetime', 'week', 'date_for_merge', 'time', 'TIME',\
-                        'date'})
-#%%
-    
-#df = df.drop(columns = {'TIME'})
-#%%
-df_avg = df.groupby(['cluster','yearWeek']).agg('mean')
-df_avg = df_avg.reset_index()
-
-#print(df_avg)
-#%%
-plt.plot(df_avg.yearWeek, df_avg.usage)
-#%%
-# Reshape to get each time of the day in a column (features) and each station in a row (data-points)
-X = df_avg.pivot(index='cluster' , columns='yearWeek', values='usage')
-print(X.shape)
-X
-#%%
-print(X.columns)
-
-#%%
-#from sklearn.cluster import KMeans
-#%%
-#Number of cluster 
-n_clusters = 3
-
-#Define model
-kmeans = KMeans(n_clusters=n_clusters, random_state=42)
-
-#Fit kmeans model and plot the centroids
-kmeans.fit(X)
-
-#Predict
-clusters = kmeans.predict(X)
-
-print(clusters)
-
-#%%
-fig, ax = plt.subplots(figsize=(10,6))
-colours = ['red','blue','green']
-
-for k, colour in zip(kmeans.cluster_centers_, colours):
-    plt.scatter(X.columns,100*k,color=colour,label=colour)
-    
-#ax.set_xlim([0,24])
-#ax.set_ylim([0,100])
-xticks = ax.get_xticks()
-plt.xlabel('Week')
-plt.ylabel("usage")
-plt.show()
 
 
 #%%
 
+#https://github.com/Panchop10/dublinbike_predictive_analytics
+#%%
 df = training_data.copy()
 df = df.dropna()
+
+
+#%%
 df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
-                        'time_type', 'hour', 'dayIndex', 'OCCUPANCY_PCT', 'FULL', 'EMPTY',\
-                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', \
-                        'datetime', 'date_for_merge', 'time', 'TIME'})
+                        'time_type', 'hour', 'dayIndex', \
+                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'time_type',\
+                        'datetime', 'date_for_merge', 'time', 'TIME', 'day_type', \
+                        'year', 'yearWeek'})
 #%%
 #%%
+df = df.drop(columns = {'day_number'})
+
+#%%
+# specify the predictors and the response variable
+
+X = df.copy().drop(columns = 'usage')
+y = df.usage
+
+dday = df.groupby(['date']).mean()
+
+X = dday.copy().drop(columns = 'usage')
+y = dday.usage
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+regressor = LinearRegression()  
+regressor.fit(X_train, y_train)
+#%%
+y_pred = regressor.predict(X_test)
+dplot = pd.DataFrame({'actual': y_test, 'predicted': y_pred})
+
+dplot1 = dplot.copy()#.head(40)
+dplot1['index'] = dplot1.reset_index().index
+
+#%%
+
+#%%
+ax = plt.gca()
+
+dplot1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
+dplot1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
+plt.title('Actual vs predicted usage Linear regression')
+plt.xlabel('index')
+plt.ylabel('bike usage (normalised)')
+
+plt.show(block=True)
+
+print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+
+#%%
+#
+
+regressions = [
+    svm.SVR(),  #0.09251714474797995 
+    linear_model.SGDRegressor(),   # awful
+    linear_model.BayesianRidge(),  #0.030229285858572368
+    linear_model.LassoLars(),  # 0.030367853977666812
+    linear_model.ARDRegression(),   # out of memory
+    linear_model.PassiveAggressiveRegressor(),  # 0.09249226888404853 
+    linear_model.TheilSenRegressor(), # out of memory
+    linear_model.LinearRegression(),  #0.03022928687137188 
+    linear_model.RidgeCV()   ]  #0.030229287363110348
     
-#3D visualisation
-fig = plt.figure(figsize=(20,20))
-ax = plt.axes(projection='3d')
-for k, colour in zip(range(n_clusters), colours):
-    toPlot = X[clusters==k]
-    x,y = np.array(toPlot).nonzero() #get indexes
-    z = toPlot.unstack() #linearise the DataFrame
-    ax.scatter(toPlot.index[x],toPlot.columns[y],z,c= colour)
 
-ax.set_xlabel('cluster')
-ax.set_ylabel('week')
-ax.set_zlabel('usage')
-plt.show()
+# fit & score each regression model
+for item in regressions:
+    print(item)
+    reg = item
+    reg.fit(X_train, y_train)
+    y_pred = reg.predict(X_test)
+    print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred),'\n')
+    print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)),'\n')
+
+
+#%%
+scores = cross_val_score(reg, X, y, cv=5)
+scores
+#array([0.21907824, 0.24079283, 0.3658323 , 0.3448517 , 0.20676684])
+
+#%%
+# best (lowest) rmse = linear_model.RidgeCV() (and lowest mae)
+reg = linear_model.RidgeCV()
+reg.fit(X_train, y_train)
+y_pred = reg.predict(X_test)
+print(reg)
+
+#%%
+dplot = pd.DataFrame({'actual': y_test, 'predicted': y_pred})
+
+dplot1 = dplot.copy()
+dplot1['index'] = dplot1.reset_index().index
+
+#%%
+ax = plt.gca()
+
+dplot1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
+dplot1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
+plt.title('Actual vs predicted usage RidgeCV')
+plt.xlabel('index')
+plt.ylabel('bike usage (normalised)')
+
+plt.show(block=True)
+
+print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+
+
+#%%
+from sklearn.model_selection import cross_validate
+
+cv_results = cross_validate(reg, X, y, cv=5)
+
+#%%
+sorted(cv_results.keys())
+cv_results['test_score']
+# array([0.21907824, 0.24079283, 0.3658323 , 0.3448517 , 0.20676684])
+
+#%%
+scores = cross_validate(reg, X, y, cv=5,\
+                        scoring = ('r2', 'mean_squared_error'), \
+                        return_train_score = True)
+sorted(scores.keys())
+
+scores['test_r2']
+scores['test_mean_squared_error']
+#array([-1.18619908e-05, -1.34156808e-05, -1.01247625e-05, -9.78712672e-06, -1.55826859e-05])
+
 #%%
 
 #%%
+## Run the model on the full test set and compare to the actual 2020 data
+#%%
+
+# train model on all of training data 
+reg.fit(X, y)
+
+print(reg)
+ 
 
 #%%
+#final test set - actual 2020 data
+test_data = data[data['year'] == 2020]
+
+# check we have the right data
+ct= pd.crosstab([test_data['NAME'], test_data['BIKE STANDS'], test_data['STATION ID']],test_data['cluster'])
+print(ct)
+
+
+#%%
+
+df2020 = test_data.copy().dropna()
+df2020  = df2020.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
+                        'time_type', 'hour', 'dayIndex', \
+                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'time_type',\
+                        'datetime', 'date_for_merge', 'time', 'TIME', 'day_type', \
+                        'year', 'yearWeek'})
+
+#%%
+# specify the predictors and the response variable
+dday = df2020.groupby(['date']).mean()
+
+X2020  = dday.copy().drop(columns = 'usage')
+y2020 = dday.usage
+
+#%%
+y_pred = reg.predict(X2020)
+
+print('Mean Absolute Error:', metrics.mean_absolute_error(y2020, y_pred),'\n')
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y2020, y_pred)),'\n')
+
+#%%
+ymean = y.mean(0)
+print(ymean)
+
+#%%
+#y_pred = regressor.predict(X_test)
+plot2020 = pd.DataFrame({'actual': y2020, 'predicted': y_pred})
+plot2020['mean'] = ymean
+
+df1 = plot2020
+df1['index'] = df1.reset_index().index
+#print(df1)
+#%%
+ax = plt.gca()
+
+df1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
+df1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
+#df1.plot(kind='line',x='index',y='mean', color='blue', ax=ax)
+plt.title('Actual vs predicted usage - 2020')
+plt.xlabel('Day of the Year')
+plt.ylabel('bike usage (normalised)')
+
+plt.show(block=True)
+
+
+
+#%%
+len(y2020) - len(y_pred)
+
 
 #%%

@@ -143,9 +143,7 @@ Excluded stations with less than 300,000 data points.   None of the stations wer
 	\label{fig:stations}
 \end{figure}
 
-Variable modelled is usage, which is the difference in available bikes from one time point to the next.  For modelling, this is normalised by dividing by the number of bike stands.
-
-
+Variable modelled is usage, which is the absolute difference in available bikes from one time point to the next.  For modelling, this is normalised by dividing by the number of bike stands.
 
 
 \section{The impact of the pandemic on bike usage}
@@ -169,6 +167,13 @@ Variable modelled is usage, which is the difference in available bikes from one 
 \section{Estimated non-pandemic usage for 2020}
 %2. To estimate how the city-bike usage would have been without the pandemic (e.g., 2020) 
 
+The bike usage was way down compared to the prediction.\footnote{RidgeCV(alphas=(0.1, 1.0, 10.0), cv=None, fit\_intercept=True, gcv\_mode=None, normalize=False, scoring=None, store\_cv\_values=False)}  
+The prediction isn't too bad for January, February, but usage drops at the end of February and stays down for the rest of the year.
+\begin{figure}[!htbp]
+	\includegraphics[width=0.7\textwidth]{../graphs/pred_2020.png}
+	\caption{Predicted bike usage in 2020, compared to actual usage}
+	\label{fig:surface}
+\end{figure}
 
 
 %\section{Predicted bike usage for 2022} 
