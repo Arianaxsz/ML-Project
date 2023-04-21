@@ -312,7 +312,6 @@ ymean = y.mean(0)
 print(ymean)
 
 #%%
-#y_pred = regressor.predict(X_test)
 plot2020 = pd.DataFrame({'actual': y2020, 'predicted': y_pred})
 plot2020['mean'] = ymean
 
