@@ -11,7 +11,7 @@ from datetime import date
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 import seaborn as sns
-#import folium
+import folium
 
 #from matplotlib import pyplot as plt
 
