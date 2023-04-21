@@ -123,76 +123,32 @@ print(data.columns.values)
 #%%
 #training set
 training_data = data[data['year'] < 2020]
-#len(training_data)
-#training_data.to_csv("data/training.csv", index=False)#%%
-
 
 ct= pd.crosstab([training_data['NAME'], training_data['BIKE STANDS'], training_data['STATION ID']],training_data['cluster'])
 print(ct)
 #%%
 df = training_data.copy()
 df = df.dropna()
-#range_start = date(2019, 12, 15)
-#range_end = date(2020, 2, 1)
-
-#m = (df.date >= range_start) & (df.date <= range_end)
-#df_short = df[m].sort_values(by='datetime')
-
-#%%
-#df['yearWeek'] = df.year *100+df.week
-
-# Remove columns with information that we don't need for the clustering
-df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
-                        'time_type', 'hour', 'dayIndex', 'year',  'OCCUPANCY_PCT', 'FULL', 'EMPTY',\
-                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'day_type',\
-                        'month', 'day_number', 'datetime', 'week', 'date_for_merge', 'time', 'TIME',\
-                        'date'})
-#%%
-    
-#df = df.drop(columns = {'TIME'})
-#%%
-df_avg = df.groupby(['cluster','yearWeek']).agg('mean')
-df_avg = df_avg.reset_index()
-
-#print(df_avg)
-#%%
-plt.plot(df_avg.yearWeek, df_avg.usage)
-#%%
-# Reshape to get each time of the day in a column (features) and each station in a row (data-points)
-X = df_avg.pivot(index='cluster' , columns='yearWeek', values='usage')
-print(X.shape)
-X
-#%%
-print(X.columns)
-
-#%%
 
 
-#%%
-
-#%%
-
-#%%
-
-df = training_data.copy()
-#%%
-df = df.dropna()
 
 #%%
 df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
                         'time_type', 'hour', 'dayIndex', \
                         'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'time_type',\
-                        'datetime', 'date_for_merge', 'time', 'TIME', 'day_type', 'date'})
+                        'datetime', 'date_for_merge', 'time', 'TIME', 'day_type', 'date',\
+                        'year', 'yearWeek'})
 #%%
-df.head(1)
-#%%
+# specify the predictors and the response variable
+
 X = df.copy().drop(columns = 'usage')
 y = df.usage
 #%%
-#df = df.drop(columns='datetime')
+X.head()
+
 #%%
-#The script splits the dataset into 80% train data and 20% test data.
-#from sklearn.model_selection import train_test_split
+#split the dataset into 80% train data and 20% test data.
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
 regressor = LinearRegression()  
 regressor.fit(X_train, y_train)
@@ -200,7 +156,7 @@ regressor.fit(X_train, y_train)
 y_pred = regressor.predict(X_test)
 df = pd.DataFrame({'actual': y_test, 'predicted': y_pred})
 
-df1 = df.head(40)
+df1 = df.copy()  #.head(40)
 df1['index'] = df1.reset_index().index
 #print(df1)
 #%%
@@ -223,15 +179,17 @@ print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_p
 #
 
 regressions = [
-    svm.SVR(),
-    linear_model.SGDRegressor(),   # takes a while
-    linear_model.BayesianRidge(),
-    linear_model.LassoLars(),
+    svm.SVR(),  #0.09251714474797995 
+    #linear_model.SGDRegressor(),   # awful
+    linear_model.BayesianRidge(),  #0.030229285858572368
+    linear_model.LassoLars(),  # 0.030367853977666812
     #linear_model.ARDRegression(),   # out of memory
-    linear_model.PassiveAggressiveRegressor(),
+    linear_model.PassiveAggressiveRegressor(),  # 0.09249226888404853 
     #linear_model.TheilSenRegressor(), # out of memory
-    linear_model.LinearRegression()]
-#linear_model.RidgeCV
+    linear_model.LinearRegression(),  #0.03022928687137188 
+    linear_model.RidgeCV()   ]  #0.030229287363110348
+    
+
 # fit & score each regression model
 for item in regressions:
     print(item)
@@ -241,24 +199,35 @@ for item in regressions:
     print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred),'\n')
     print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)),'\n')
 
+# best (lowest) rmse = linear_model.LinearRegression() (next to lowest mae)
 
 #%%
-clf = svm.SVR() #linear_model.SGDRegressor()
+reg = linear_model.LinearRegression(normalize = True)
+reg.fit(X_train, y_train)
+y_pred = reg.predict(X_test)
+print(reg)
+print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred),'\n')
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)),'\n')
+
+
+#%%
+clf = linear_model.LinearRegression()
 scores = cross_val_score(clf, X, y, cv=5)
 scores
 
+#array([-0.11595994, -0.00386285,  0.01480505,  0.00448484,  0.00112841])
 #%%
 from sklearn.model_selection import cross_val_predict
 
 #%%
 y_pred = cross_val_predict(clf, X, y, cv = 5)
 
-y_pred = regressor.predict(X_test)
+#y_pred = regressor.predict(X_test)
 df = pd.DataFrame({'actual': y_test, 'predicted': y_pred})
 
 df1 = df   #.head(40)
 df1['index'] = df1.reset_index().index
-#print(df1)
+print(df1)
 #%%
 ax = plt.gca()
 
@@ -274,31 +243,94 @@ print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
 print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
 
 
+#%%
+from sklearn.model_selection import cross_validate
+
+cv_results = cross_validate(reg, X, y, cv=5)
+
+#%%
+sorted(cv_results.keys())
+cv_results['test_score']
+# array([-0.10775501, -0.00408601,  0.01480581,  0.00447961,  0.00118533])
+
+#%%
+scores = cross_validate(reg, X, y, cv=5,\
+                        scoring = ('r2', 'mean_squared_error'), \
+                        return_train_score = True)
+sorted(scores.keys())
+
+scores['test_r2']
+
+#%%
+
+#%%
+## Run the model on the full test set and compare to the actual 2020 data
+#%%
+
+# train model on all of training data 
+reg = linear_model.LinearRegression(normalize = True)
+reg.fit(X, y)
+
+print(reg)
+ 
+
+#%%
+#final test set - actual 2020 data
+test_data = data[data['year'] == 2020]
+
+# check we have the right data
+ct= pd.crosstab([test_data['NAME'], test_data['BIKE STANDS'], test_data['STATION ID']],test_data['cluster'])
+print(ct)
 
 
 #%%
-from sklearn.metrics import PredictionErrorDisplay
-#%%
 
-fig, axs = plt.subplots(ncols=2, figsize=(8, 4))
-PredictionErrorDisplay.from_predictions(
-    y,
-    y_pred=y_pred,
-    kind="actual_vs_predicted",
-    subsample=100,
-    ax=axs[0],
-    random_state=0,
-)
-axs[0].set_title("Actual vs. Predicted values")
-PredictionErrorDisplay.from_predictions(
-    y,
-    y_pred=y_pred,
-    kind="residual_vs_predicted",
-    subsample=100,
-    ax=axs[1],
-    random_state=0,
-)
-axs[1].set_title("Residuals vs. Predicted Values")
-fig.suptitle("Plotting cross-validated predictions")
-plt.tight_layout()
-plt.show()
+df2020 = test_data.copy().dropna()
+df2020  = df2020 .drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
+                        'time_type', 'hour', 'dayIndex', \
+                        'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'time_type',\
+                        'datetime', 'date_for_merge', 'time', 'TIME', 'day_type', 'date'})
+#%%
+# specify the predictors and the response variable
+
+X2020 = df2020.copy().drop(columns = 'usage')
+y2020 = df2020.usage
+
+
+#%%
+y_pred = reg.predict(X2020)
+
+print('Mean Absolute Error:', metrics.mean_absolute_error(y2020, y_pred),'\n')
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y2020, y_pred)),'\n')
+
+#%%
+ymean = y.mean(0)
+print(ymean)
+
+#%%
+#y_pred = regressor.predict(X_test)
+plot2020 = pd.DataFrame({'actual': y2020, 'predicted': y_pred})
+plot2020['mean'] = ymean
+
+df1 = plot2020
+df1['index'] = df1.reset_index().index
+#print(df1)
+#%%
+ax = plt.gca()
+
+df1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
+df1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
+#df1.plot(kind='line',x='index',y='mean', color='blue', ax=ax)
+plt.title('Actual vs predicted usage - Linear Regression')
+plt.xlabel('index')
+plt.ylabel('bike usage (normalised)')
+
+plt.show(block=True)
+
+
+
+#%%
+len(y2020) - len(y_pred)
+
+
+#%%

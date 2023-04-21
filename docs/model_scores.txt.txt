@@ -3,53 +3,50 @@ https://scikit-learn.org/stable/modules/cross_validation.html
 https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html
 https://github.com/Panchop10/dublinbike_predictive_analytics/blob/master/scripts/model_building_linear_regression.py
 
+SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='auto',
+  kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
+Mean Absolute Error: 0.08979536440480282 
+
+Root Mean Squared Error: 0.09251714474797995 
 
 SGDRegressor(alpha=0.0001, average=False, epsilon=0.1, eta0=0.01,
        fit_intercept=True, l1_ratio=0.15, learning_rate='invscaling',
        loss='squared_loss', max_iter=None, n_iter=None, penalty='l2',
        power_t=0.25, random_state=None, shuffle=True, tol=None, verbose=0,
        warm_start=False)
-Mean Absolute Error: 8.72526634426255e+18 
+Mean Absolute Error: 8.392085947249571e+18 
 
-Root Mean Squared Error: 8.725266526142946e+18 
-
-
-SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='auto',
-  kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
-Mean Absolute Error: 0.08969396636815669 
-
-Root Mean Squared Error: 0.09244483336100234 
-
-
-SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='auto',
-  kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)
-Mean Absolute Error: 0.08981181541369854 
-
-Root Mean Squared Error: 0.09256246404490527 
+Root Mean Squared Error: 8.392086117529201e+18 
 
 BayesianRidge(alpha_1=1e-06, alpha_2=1e-06, compute_score=False, copy_X=True,
        fit_intercept=True, lambda_1=1e-06, lambda_2=1e-06, n_iter=300,
        normalize=False, tol=0.001, verbose=False)
-Mean Absolute Error: 0.018069442200219846 
+Mean Absolute Error: 0.01808825746168249 
 
-Root Mean Squared Error: 0.030349118919909202 
+Root Mean Squared Error: 0.030229285858572368 
 
 LassoLars(alpha=1.0, copy_X=True, eps=2.220446049250313e-16,
      fit_intercept=True, fit_path=True, max_iter=500, normalize=True,
      positive=False, precompute='auto', verbose=False)
-Mean Absolute Error: 0.01836575904865685 
+Mean Absolute Error: 0.01837488397683847 
 
-Root Mean Squared Error: 0.03049599056661891 
+Root Mean Squared Error: 0.030367853977666812 
 
 PassiveAggressiveRegressor(C=1.0, average=False, epsilon=0.1,
               fit_intercept=True, loss='epsilon_insensitive',
               max_iter=None, n_iter=None, random_state=None, shuffle=True,
               tol=None, verbose=0, warm_start=False)
-Mean Absolute Error: 0.0897878644285596 
+Mean Absolute Error: 0.08977019420042699 
 
-Root Mean Squared Error: 0.09253883318381668 
+Root Mean Squared Error: 0.09249226888404853 
 
 LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1, normalize=False)
-Mean Absolute Error: 0.018069247102069474 
+Mean Absolute Error: 0.01808802431389312 
 
-Root Mean Squared Error: 0.030349115479827302 
+Root Mean Squared Error: 0.03022928687137188 
+
+RidgeCV(alphas=(0.1, 1.0, 10.0), cv=None, fit_intercept=True, gcv_mode=None,
+    normalize=False, scoring=None, store_cv_values=False)
+Mean Absolute Error: 0.018088077877328752 
+
+Root Mean Squared Error: 0.030229287363110348 

@@ -181,6 +181,9 @@ missing
 
 #%%
 
+df_daily=data.groupby('date').agg(['mean']).reset_index()
+df_daily.plot(x='date', y='usage',kind="line")
+plt.show()
 
 
 #%%
@@ -189,3 +192,11 @@ missing
 m = diff_date.dt.days >1
 df_usage[m].to_csv('data/discontinuities.csv') 
 
+#%%
+df = pd.DataFrame(np.random.randn(1000, 4), index=ts.index, columns=list("ABCD"))
+
+df = df.cumsum()
+
+plt.figure();
+
+df.plot();
