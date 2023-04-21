@@ -131,61 +131,72 @@ df = training_data.copy()
 df = df.dropna()
 
 
+#%%
+
+#https://github.com/Panchop10/dublinbike_predictive_analytics
+#%%
+df = training_data.copy()
+df = df.dropna()
+
 
 #%%
 df = df.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
                         'time_type', 'hour', 'dayIndex', \
                         'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'time_type',\
-                        'datetime', 'date_for_merge', 'time', 'TIME', 'day_type', 'date',\
+                        'datetime', 'date_for_merge', 'time', 'TIME', 'day_type', \
                         'year', 'yearWeek'})
+#%%
+#%%
+df = df.drop(columns = {'day_number'})
+
 #%%
 # specify the predictors and the response variable
 
 X = df.copy().drop(columns = 'usage')
 y = df.usage
-#%%
-X.head()
 
-#%%
-#split the dataset into 80% train data and 20% test data.
+dday = df.groupby(['date']).mean()
+
+X = dday.copy().drop(columns = 'usage')
+y = dday.usage
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
 regressor = LinearRegression()  
 regressor.fit(X_train, y_train)
 #%%
 y_pred = regressor.predict(X_test)
-df = pd.DataFrame({'actual': y_test, 'predicted': y_pred})
+dplot = pd.DataFrame({'actual': y_test, 'predicted': y_pred})
 
-df1 = df.copy()  #.head(40)
-df1['index'] = df1.reset_index().index
-#print(df1)
+dplot1 = dplot.copy()#.head(40)
+dplot1['index'] = dplot1.reset_index().index
+
+#%%
+
 #%%
 ax = plt.gca()
 
-df1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
-df1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
-plt.title('Actual vs predicted usage (Linear Regresion Method)')
+dplot1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
+dplot1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
+plt.title('Actual vs predicted usage Linear regression')
 plt.xlabel('index')
-plt.ylabel('bike usage')
+plt.ylabel('bike usage (normalised)')
 
 plt.show(block=True)
 
 print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
 print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
 
-#https://github.com/Panchop10/dublinbike_predictive_analytics
-#%%
 #%%
 #
 
 regressions = [
     svm.SVR(),  #0.09251714474797995 
-    #linear_model.SGDRegressor(),   # awful
+    linear_model.SGDRegressor(),   # awful
     linear_model.BayesianRidge(),  #0.030229285858572368
     linear_model.LassoLars(),  # 0.030367853977666812
-    #linear_model.ARDRegression(),   # out of memory
+    linear_model.ARDRegression(),   # out of memory
     linear_model.PassiveAggressiveRegressor(),  # 0.09249226888404853 
-    #linear_model.TheilSenRegressor(), # out of memory
+    linear_model.TheilSenRegressor(), # out of memory
     linear_model.LinearRegression(),  #0.03022928687137188 
     linear_model.RidgeCV()   ]  #0.030229287363110348
     
@@ -199,41 +210,31 @@ for item in regressions:
     print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred),'\n')
     print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)),'\n')
 
-# best (lowest) rmse = linear_model.LinearRegression() (next to lowest mae)
 
 #%%
-reg = linear_model.LinearRegression(normalize = True)
+scores = cross_val_score(reg, X, y, cv=5)
+scores
+#array([0.21907824, 0.24079283, 0.3658323 , 0.3448517 , 0.20676684])
+
+#%%
+# best (lowest) rmse = linear_model.RidgeCV() (and lowest mae)
+reg = linear_model.RidgeCV()
 reg.fit(X_train, y_train)
 y_pred = reg.predict(X_test)
 print(reg)
-print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred),'\n')
-print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)),'\n')
-
 
 #%%
-clf = linear_model.LinearRegression()
-scores = cross_val_score(clf, X, y, cv=5)
-scores
+dplot = pd.DataFrame({'actual': y_test, 'predicted': y_pred})
 
-#array([-0.11595994, -0.00386285,  0.01480505,  0.00448484,  0.00112841])
-#%%
-from sklearn.model_selection import cross_val_predict
+dplot1 = dplot.copy()
+dplot1['index'] = dplot1.reset_index().index
 
-#%%
-y_pred = cross_val_predict(clf, X, y, cv = 5)
-
-#y_pred = regressor.predict(X_test)
-df = pd.DataFrame({'actual': y_test, 'predicted': y_pred})
-
-df1 = df   #.head(40)
-df1['index'] = df1.reset_index().index
-print(df1)
 #%%
 ax = plt.gca()
 
-df1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
-df1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
-plt.title('Actual vs predicted usage SGD Linear - 10 fold crossvalidation')
+dplot1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
+dplot1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
+plt.title('Actual vs predicted usage RidgeCV')
 plt.xlabel('index')
 plt.ylabel('bike usage (normalised)')
 
@@ -251,7 +252,7 @@ cv_results = cross_validate(reg, X, y, cv=5)
 #%%
 sorted(cv_results.keys())
 cv_results['test_score']
-# array([-0.10775501, -0.00408601,  0.01480581,  0.00447961,  0.00118533])
+# array([0.21907824, 0.24079283, 0.3658323 , 0.3448517 , 0.20676684])
 
 #%%
 scores = cross_validate(reg, X, y, cv=5,\
@@ -260,6 +261,8 @@ scores = cross_validate(reg, X, y, cv=5,\
 sorted(scores.keys())
 
 scores['test_r2']
+scores['test_mean_squared_error']
+#array([-1.18619908e-05, -1.34156808e-05, -1.01247625e-05, -9.78712672e-06, -1.55826859e-05])
 
 #%%
 
@@ -268,7 +271,6 @@ scores['test_r2']
 #%%
 
 # train model on all of training data 
-reg = linear_model.LinearRegression(normalize = True)
 reg.fit(X, y)
 
 print(reg)
@@ -286,16 +288,18 @@ print(ct)
 #%%
 
 df2020 = test_data.copy().dropna()
-df2020  = df2020 .drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
+df2020  = df2020.drop(columns = {'NAME','STATUS','ADDRESS', 'LATITUDE','LONGITUDE', 'LAST UPDATED','AVAILABLE BIKE STANDS',\
                         'time_type', 'hour', 'dayIndex', \
                         'STATION ID','BIKE STANDS', 'AVAILABLE BIKES', 'time_type',\
-                        'datetime', 'date_for_merge', 'time', 'TIME', 'day_type', 'date'})
+                        'datetime', 'date_for_merge', 'time', 'TIME', 'day_type', \
+                        'year', 'yearWeek'})
+
 #%%
 # specify the predictors and the response variable
+dday = df2020.groupby(['date']).mean()
 
-X2020 = df2020.copy().drop(columns = 'usage')
-y2020 = df2020.usage
-
+X2020  = dday.copy().drop(columns = 'usage')
+y2020 = dday.usage
 
 #%%
 y_pred = reg.predict(X2020)
@@ -321,8 +325,8 @@ ax = plt.gca()
 df1.plot(kind='line',x='index',y='actual', color='green',ax=ax)
 df1.plot(kind='line',x='index',y='predicted', color='red', ax=ax)
 #df1.plot(kind='line',x='index',y='mean', color='blue', ax=ax)
-plt.title('Actual vs predicted usage - Linear Regression')
-plt.xlabel('index')
+plt.title('Actual vs predicted usage - 2020')
+plt.xlabel('Day of the Year')
 plt.ylabel('bike usage (normalised)')
 
 plt.show(block=True)
