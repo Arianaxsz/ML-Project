@@ -1,173 +1,62 @@
-\documentclass[12pt,letterpaper]{article}
-\usepackage{graphicx,textcomp}
-\usepackage{natbib}
-\usepackage{setspace}
-\usepackage{fullpage}
-\usepackage{color}
-\usepackage[reqno]{amsmath}
-\usepackage{amsthm}
-\usepackage{fancyvrb}
-\usepackage{amssymb,enumerate}
-\usepackage[all]{xy}
-\usepackage{endnotes}
-\usepackage{lscape}
-\newtheorem{com}{Comment}
-\usepackage{float}
-\usepackage{hyperref}
-\newtheorem{lem} {Lemma}
-\newtheorem{prop}{Proposition}
-\newtheorem{thm}{Theorem}
-\newtheorem{defn}{Definition}
-\newtheorem{cor}{Corollary}
-\newtheorem{obs}{Observation}
-\usepackage[compact]{titlesec}
-\usepackage{dcolumn}
-\usepackage{tikz}
-\usetikzlibrary{arrows}
-\usepackage{multirow}
-\usepackage{xcolor}
-\newcolumntype{.}{D{.}{.}{-1}}
-\newcolumntype{d}[1]{D{.}{.}{#1}}
-\definecolor{light-gray}{gray}{0.65}
-\usepackage{url}
-\usepackage{listings}
-\usepackage{color}
-\usepackage[utf8]{inputenc}
-\usepackage{verbatim} % includes comment blocks
-%\usepackage{rotating}
-%\usepackage{geometry}
-%\usepackage{pdflscape}
-\usepackage{lscape}
+\documentclass[11pt, singlecolumn, citestyle=authoryear]{elegantbook}
+\definecolor{customcolor}{RGB}{153,204,255}
+\colorlet{coverlinecolor}{customcolor}
+\usepackage{wrapfig}
+\usepackage{lmodern}
+\usepackage{lipsum,graphicx}
+\usepackage[utf8]{inputenc} %unicode support
+\usepackage[T1]{fontenc}
 
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
-\lstdefinestyle{mystyle}{
-	backgroundcolor=\color{backcolour},
-	commentstyle=\color{codegreen},
-	keywordstyle=\color{magenta},
-	numberstyle=\tiny\color{codegray},
-	stringstyle=\color{codepurple},
-	basicstyle=\footnotesize,
-	breakatwhitespace=false,
-	breaklines=true,
-	captionpos=b,
-	keepspaces=true,
-	numbers=left,
-	numbersep=5pt,
-	showspaces=false,
-	showstringspaces=false,
-	showtabs=false,
-	tabsize=2
+\newcommand{\compresslist}{%
+	\setlength{\itemsep}{0pt}%
+	\setlength{\parskip}{1pt}%
+	\setlength{\parsep}{0pt}%
 }
-\lstset{style=mystyle}
-\newcommand{\Sref}[1]{Section~\ref{#1}}
-\newtheorem{hyp}{Hypothesis}
+
 
 \title{FUTURE-DATA\\Dublin Bikes}
 \date{Due: April 21, 2023}
 \author{Ariana Alves Antunes, Imelda Finn, Marcus Ò Faolain}
 
 \begin{document}
-	\maketitle
-\begin{comment}
-\section*{Instructions}
-Scenario: You are working for FUTURE-DATA a local company specialised in data science. Dublin City
-Council hired your company to study the impact of COVID-19 on the city-bikes usage as they are
-planning to optimise the city-bike system. Dublin City Council had originally structured the city-bike
-network based on the forecasts of bike usage up to 2030. However, they think that the usage may not
-match the initial prediction because of the impact of the pandemic on our mobility. FUTURE-DATA
-decided to investigate this rapidly and by formulating multiple scenarios that should be considered by
-the City Council. To do so, they assigned the task to k small teams or machine learning and smart and
-sustainable cities experts. You are part of one of these k teams.
-Task: The company proposed 3 goals. Pick 2 out of the following 3 tasks (two tasks correctly carried
-out will give you full points; an extra task will not give any extra points).
-1. To assess the impact of the pandemic on the city-bike usage;
-2. To estimate how the city-bike usage would have been without the pandemic (e.g., 2020);
-3. To predict the city-bike usage for 2022 in both the pandemic and no-pandemic scenarios. Use
-both qualitative and quantitative comparisons.
-The manager suggested focussing on two or three strategically placed bike stations (of course, you are
-free to do more than that, if you like). Make sure that the data for that bike station is available on all
-the datasets. Missing or bad data-points can be a problem. So, identifying stations with good data will
-make your life easier (but feel free to make your life more complicated if you like the challenge).
-Suggestion: The original features tell us about bike and bike stand availability. However, that is a
-different concept from “bike usage”. The optimal approach involves deriving a new feature
-quantifying the “bike usage” in a given station. Other ways of tackling the tasks are also accepted, but
-remember to justify your choices and to plot clear, compact figures
+	\mainmatter 
+	
+\chapter*{FUTURE-DATA\\Dublin Bikes \\\ Ariana Alves Antunes, Imelda Finn, Ó Faoláin}
 
+ 	\section*{Introduction}
+This assignment is measuring the impact of pandemic on Dublin City Bikes within different scenario. 
+	
 
-	Submission:
-	- A brief report (~2 pages including figures, max 3 pages) with text answering the three
-	questions above, and figures (e.g., bar plots) or tables showing the results and data supporting
-	your considerations. Remember: You are planning to present this report to your manages AND
-	to Dublin City Council. As such, figures must be easy to understand (e.g., large font size, brief
-	but meaningful axis labels, include a short caption describing each figure).
-	- Your Python scripts. Please write them well, with comments so that I can understand what
-	you did. I will use the scripts to double-check your results where necessary.
-	- Submission deadline: 21 April 2023.
-	- Late submission penalty: 5% * number of days (e.g., 2 days late -> 10% penalty
+\section{The impact of the pandemic on bike usage}
+%To assess the impact of the pandemic on the city-bike usage;
+	Due to lockdowns and restrictions in Dublin during COVID,  bike usage was directly impacted as shown in the figures below from 2019 and 2020, with more people  choosing to cycle over public transportation.  However with businesses closed and people working from home, the usage dropped by half. Just Eat Dublin Bikes’ latest summary statistics below as at 31/08/2019, current valid annual subscribers was 66,940 with €25 membership fee, plus revenue made with advertising. 
 
-\end{comment}
+	\begin{figure}[h!]
+		\includegraphics[width=0.7\textwidth]{../graphs/usaged_total_plus2020.png}
+		\caption{Total bike usage and total usage for 2020}
+		\label{fig:surface}\label{fig:model}
+	\end{figure}
 
-\section{Technical/Data issues}
-Missing data ...
+As can be observed from the graphs the contrast between before the pandemic started and 4 months after, there is a decline between full lockdown and when restrictions imposed by the Government were lifted. Since the bikes are membership payments on a yearly basis, the risk of not acquiring new clients could be a major risk for the business, still the essential works were a big part of the new audience being attracted to Dublin bikes. 
 
-
-
-
-Picked stations by clustering on ........
-
-Excluded stations with less than 300,000 data points.   None of the stations were open the whole time.
-2 stations from each cluster.  The cluster 2 stations had similar pre-pandemic characteristics and both serve hospitals.% Table with station data?, incl stands, colour
-
-\begin{table}[h]
-	\centering
+\begin{table}[h!]
 	\begin{tabular}{|l|r|r|}
-		Station Name & cluster & bike stands\\
-		FITZWILLIAM SQUARE EAST & 0 & 40\\
-		HANOVER QUAY & 0 & 40\\
-		MATER HOSPITAL & 2 & 40\\
-		NEW CENTRAL BANK & 1 & 40 \\
-		PARNELL SQUARE NORTH & 2 & 20\\
-		YORK STREET EAST & 1 & 32 \\
+		Year & Usage \\
+		2018 & 13464.0 \\
+		2019 & 26501.0 \\ 
+		2020 & 11106.0 \\ 
+		2021 & 8188.0 \\ 
 		
 	\end{tabular} 
 \end{table}
 
 
-\begin{figure}[!htbp]
-	\includegraphics[width=0.7\textwidth]{../graphs/bikeStationMap.png}
-	\caption{Selected Bike Stations}
-	\label{fig:stations}
-\end{figure}
 
-Variable modelled is usage, which is the absolute difference in available bikes from one time point to the next.  For modelling, this is normalised by dividing by the number of bike stands.
-
-
-\section{The impact of the pandemic on bike usage}
-%To assess the impact of the pandemic on the city-bike usage;
-
-\begin{comment}
-	\begin{figure}[!htbp]
-		\includegraphics[width=0.7\textwidth]{graphs/wireframe.pdf}
-		\caption{mle surface}
-		\label{fig:surface}
-	\end{figure}
-	\begin{figure}[!htbp]
-		\includegraphics[width=0.7\textwidth]{graphs/q2_xy.png}
-		\includegraphics[width=0.7\textwidth]{graphs/q2_hist.png}
-		\caption{Q2 Data}
-		\label{fig:mle}
-	\end{figure}
-\end{comment}
-
-
-\section{Estimated non-pandemic usage for 2020}
+\section{Predicted bike usage for 2020}
 %2. To estimate how the city-bike usage would have been without the pandemic (e.g., 2020) 
 
-The bike usage was way down compared to the prediction.\footnote{RidgeCV(alphas=(0.1, 1.0, 10.0), cv=None, fit\_intercept=True, gcv\_mode=None, normalize=False, scoring=None, store\_cv\_values=False)}  
+Bike usage was way down compared to the prediction.\footnote{RidgeCV(alphas=(0.1, 1.0, 10.0), cv=None, fit\_intercept=True, gcv\_mode=None, normalize=False, scoring=None, store\_cv\_values=False)}  
 The prediction isn't too bad for January, February, but usage drops at the end of February and stays down for the rest of the year.
 \begin{figure}[!htbp]
 	\includegraphics[width=0.7\textwidth]{../graphs/pred_2020.png}
@@ -175,15 +64,55 @@ The prediction isn't too bad for January, February, but usage drops at the end o
 	\label{fig:surface}
 \end{figure}
 
+The pandemic also led to changes in cycling infrastructure in Dublin. The Dublin City Council implemented temporary measures, such as pop-up bike lanes and widened footpaths, to support cycling and promote social distancing. These measures were later made permanent, resulting in an increase in the number of dedicated cycle lanes across the city.
 
-%\section{Predicted bike usage for 2022} 
-%To predict the city-bike usage for 2022 in both the pandemic and no-pandemic scenarios. Use both qualitative and quantitative comparisons.
+Overall, the pandemic  has presented an opportunity for bike usage in Dublin, with more people choosing to cycle as a means of transport. The increased interest in cycling has led to improvements in cycling infrastructure and the creation of more cycling-friendly routes in the city.
 
-\section*{notes}
+
+	
+\section{Technical/Data issues}
+We excluded stations with less than 300,000 data points.   None of the stations were open the whole time. The variable modelled is usage, which is the absolute difference in available bikes from one time point to the next.  For modelling, this is normalised by dividing by the number of bike stands.
+
+There was some missing data for a few days in June and December 2019 and in January 2020.  This appears to be a system-wide issue.  The data usage calculation (diff) was re-started after each discontinuity, so a data-point was dropped for each one.
+
+Each cluster contains 2 stations, as per the table below.   The clusters were identified by analysing pre-pandemic usage. Cluster 2 stations had similar pre-pandemic characteristics and both serve hospitals. 
+
+
+
+	
+\begin{table}[h]
+	\begin{center}
+	\begin{tabular}{lrrr}
+		Station Name & cluster & bike stands\\
+		FITZWILLIAM SQUARE EAST & 0 & 40 & blue\\
+		HANOVER QUAY & 0 & 40 & blue\\
+		NEW CENTRAL BANK & 1 & 40  & red\\
+		YORK STREET EAST & 1 & 32  & red\\
+		PARNELL SQUARE NORTH & 2 & 20 & green\\
+		MATER HOSPITAL & 2 & 40 & green\\
+		\label{tbl:stations}
+	\end{tabular} 
+\end{center}
+\end{table}
+
+\begin{figure}[h!]
+	\begin{center}
+	\includegraphics[width=0.5\textwidth]{../graphs/bikeStationMap.png}
+	\caption{Selected Bike Stations}
+	\label{fig:stations}
+\end{center}
+
+\end{figure}
+\section*{Code Reference}
 \texttt{https://github.com/Arianaxsz/ML-Project}
 
-Code in \texttt{fileName.ipynb}, \texttt{py/fileName.py}
+Code in \texttt{project\_group\_2.ipynb}, \texttt{py/project\_group\_2.py}
 
+\texttt{Pre-processing: code/dublin\_bike\_analysis.ipynb}
+
+\texttt{Model: code/model\_q2.ipynb}
+
+\texttt{Data Visualization: code/Usage graphs.ipynb}
 
 %===============================================================
 
@@ -193,34 +122,6 @@ Code in \texttt{fileName.ipynb}, \texttt{py/fileName.py}
 %\noindent  %\href{https://www.researchgate.net/profile/Adam_Przeworski/publication/240357392_Classifying_Political_Regimes/links/0deec532194849aefa000000/Classifying-Political-Regimes.pdf}{Alvarez, Cheibub, Limongi, and Przeworski (1996)}
 
 
-%\input{tables/zip_poisson.tex}
-
-\begin{comment}
-	
-	\begin{figure}[!htbp]
-		\includegraphics[width=0.7\textwidth]{graphics/wireframe.pdf}
-		\caption{mle surface}
-		\label{fig:surface}
-	\end{figure}
-	\begin{figure}[!htbp]
-		\includegraphics[width=0.7\textwidth]{graphics/q2_xy.png}
-		\includegraphics[width=0.7\textwidth]{graphics/q2_hist.png}
-		\caption{Q2 Data}
-		\label{fig:mle}
-	\end{figure}
-\end{comment}
-
-\begin{comment}
-	\begin{sidewaystable}
-		%\begin{tabular}...\end{tabular}
-	\end{sidewaystable}
-	%\input{tables/gdp_crosstab.tex}
-	
-	\begin{landscape}
-		\include{tables/gdp_crosstab.tex}
-	\end{landscape}
-	
-\end{comment}
 
 
 \end{document}
